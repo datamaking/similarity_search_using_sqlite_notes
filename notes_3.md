@@ -3094,3 +3094,7 @@ Let me know which extension you're trying to use (e.g., `sqlite-vss`, `sqlite-ve
 
 
 
+export LD_LIBRARY_PATH=/path/to/extensions:$LD_LIBRARY_PATH
+
+export LD_LIBRARY_PATH=/home/datamaking/anaconda3/envs/aivenv/lib/python3.12/site-packages/sqlite_vec:$LD_LIBRARY_PATH
+
