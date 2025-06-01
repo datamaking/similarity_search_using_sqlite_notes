@@ -1,0 +1,38 @@
+graph TD
+    Start["Search Request"] --> CheckVec{"sqlite-vec available?"}
+    
+    CheckVec -->|Yes| VecPath["SQLite-Vec Path"]
+    CheckVec -->|No| FallbackPath["Fallback Path"]
+    
+    VecPath --> LoadExt["Load SQLite-Vec Extension"]
+    LoadExt --> VecQuery["Execute vec_distance_cosine Query"]
+    VecQuery --> VecResults["Get Results with Distances"]
+    
+    FallbackPath --> GetAll["Get All Embeddings"]
+    GetAll --> CalcSim["Calculate Similarity for Each"]
+    CalcSim --> SortResults["Sort by Similarity"]
+    SortResults --> LimitResults["Limit to Top Results"]
+    
+    VecResults --> FormatResults["Format Results"]
+    LimitResults --> FormatResults
+    
+    classDef process fill:#bbf,stroke:#333,stroke-width:1px
+    classDef decision fill:#fbb,stroke:#333,stroke-width:1px
+    classDef endpoint fill:#bfb,stroke:#333,stroke-width:1px
+    
+    class Start,FormatResults endpoint
+    class CheckVec decision
+    class LoadExt,VecQuery,VecResults,GetAll,CalcSim,SortResults,LimitResults process
+    
+    subgraph "SQLite-Vec Path (Fast)"
+        LoadExt
+        VecQuery
+        VecResults
+    end
+    
+    subgraph "Fallback Path (Slower)"
+        GetAll
+        CalcSim
+        SortResults
+        LimitResults
+    end

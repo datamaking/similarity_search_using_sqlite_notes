@@ -1,0 +1,36 @@
+erDiagram
+    CUSTOM_USER {
+        id int PK
+        email string UK
+        password string
+        first_name string
+        last_name string
+        is_active boolean
+        is_staff boolean
+        is_superuser boolean
+        date_joined datetime
+        last_login datetime
+    }
+    
+    SOURCE_TBL {
+        id int PK
+        source_text text
+        category string
+        created_date string
+        author string
+        department string
+        priority string
+        status string
+    }
+    
+    EMBEDDING_TBL {
+        id int PK
+        source_id int FK
+        embedding_vect text
+        metadata text
+    }
+    
+    SOURCE_TBL ||--o{ EMBEDDING_TBL : "has"
+    
+    %% Note that each source type (ADMIN, IT, FINANCE, HR) has its own database
+    %% with the same schema (SOURCE_TBL and EMBEDDING_TBL)

@@ -1,0 +1,37 @@
+sequenceDiagram
+    actor User
+    participant Frontend
+    participant SearchView
+    participant VectorSearchManager
+    participant SentenceTransformer
+    participant SQLiteVec
+    participant FallbackEngine
+    participant VectorDB
+    
+    User->>Frontend: Enter search keyword
+    Frontend->>SearchView: AJAX request with source_type and keyword
+    SearchView->>VectorSearchManager: similarity_search(source_type, keyword)
+    VectorSearchManager->>SentenceTransformer: encode(keyword)
+    SentenceTransformer-->>VectorSearchManager: query_embedding
+    
+    alt SQLite-Vec Available
+        VectorSearchManager->>SQLiteVec: Load extension
+        VectorSearchManager->>VectorDB: Execute vec_distance_cosine query
+        VectorDB-->>VectorSearchManager: Results with distances
+    else Fallback Mode
+        VectorSearchManager->>VectorDB: Get all embeddings
+        VectorDB-->>VectorSearchManager: All embeddings
+        VectorSearchManager->>FallbackEngine: Calculate cosine similarities
+        FallbackEngine-->>VectorSearchManager: Sorted results
+    end
+    
+    VectorSearchManager-->>SearchView: Formatted search results
+    SearchView-->>Frontend: JSON response with paginated results
+    Frontend->>User: Display search results
+    
+    User->>Frontend: Click on source text
+    Frontend->>SearchView: Request source details
+    SearchView->>VectorDB: Get source record
+    VectorDB-->>SearchView: Source details
+    SearchView-->>Frontend: Source details JSON
+    Frontend->>User: Display source details modal

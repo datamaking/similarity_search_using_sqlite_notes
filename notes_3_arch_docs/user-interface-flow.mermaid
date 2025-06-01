@@ -1,0 +1,18 @@
+stateDiagram-v2
+    [*] --> SignIn
+    
+    SignIn --> SignUp : "Create Account"
+    SignUp --> SignIn : "Account Created"
+    
+    SignIn --> Home : "Successful Login"
+    
+    state Home {
+        [*] --> SearchForm
+        SearchForm --> SearchResults : "Submit Search"
+        SearchResults --> Pagination : "Navigate Pages"
+        Pagination --> SearchResults : "Change Page"
+        SearchResults --> SourceDetail : "Click Source"
+        SourceDetail --> SearchResults : "Close Modal"
+    }
+    
+    Home --> SignIn : "Sign Out"

@@ -1,0 +1,30 @@
+flowchart TD
+    Start["Start setup_vector_dbs command"] --> CheckVec["Check sqlite-vec availability"]
+    CheckVec --> CreateDir["Create vector_dbs directory"]
+    CreateDir --> LoopSourceTypes["Loop through source types"]
+    
+    LoopSourceTypes --> SetupDB["Setup database tables"]
+    SetupDB --> GenData["Generate sample data"]
+    GenData --> BatchProcess["Process in batches"]
+    
+    subgraph "For each batch"
+        BatchProcess --> InsertSource["Insert source records"]
+        InsertSource --> GetIDs["Get source IDs"]
+        GetIDs --> GenEmbeddings["Generate embeddings"]
+        GenEmbeddings --> InsertEmbeddings["Insert embeddings"]
+    end
+    
+    InsertEmbeddings --> NextBatch{"More batches?"}
+    NextBatch -->|Yes| BatchProcess
+    NextBatch -->|No| NextSourceType{"More source types?"}
+    
+    NextSourceType -->|Yes| LoopSourceTypes
+    NextSourceType -->|No| End["End setup process"]
+    
+    classDef process fill:#bbf,stroke:#333,stroke-width:1px
+    classDef decision fill:#fbb,stroke:#333,stroke-width:1px
+    classDef start fill:#bfb,stroke:#333,stroke-width:2px
+    
+    class Start,End start
+    class NextBatch,NextSourceType,CheckVec decision
+    class SetupDB,GenData,InsertSource,GetIDs,GenEmbeddings,InsertEmbeddings process

@@ -1,0 +1,30 @@
+flowchart TD
+    Start["User initiates search"] --> ValidateInput["Validate input"]
+    ValidateInput --> GenerateEmbedding["Generate embedding for query"]
+    
+    GenerateEmbedding --> CheckVec{"sqlite-vec available?"}
+    
+    CheckVec -->|Yes| VecSearch["Use sqlite-vec for search"]
+    CheckVec -->|No| FallbackSearch["Use fallback search"]
+    
+    VecSearch --> FormatResults["Format results"]
+    FallbackSearch --> FormatResults
+    
+    FormatResults --> Paginate["Paginate results"]
+    Paginate --> ReturnJSON["Return JSON response"]
+    ReturnJSON --> RenderUI["Render results in UI"]
+    
+    RenderUI --> UserInteraction{"User interaction"}
+    UserInteraction -->|"Click source"| FetchDetails["Fetch source details"]
+    UserInteraction -->|"Change page"| ChangePage["Change page"]
+    
+    FetchDetails --> ShowModal["Show details modal"]
+    ChangePage --> Paginate
+    
+    classDef userAction fill:#fbb,stroke:#333,stroke-width:1px
+    classDef serverProcess fill:#bbf,stroke:#333,stroke-width:1px
+    classDef decision fill:#bfb,stroke:#333,stroke-width:1px
+    
+    class Start,UserInteraction userAction
+    class ValidateInput,GenerateEmbedding,VecSearch,FallbackSearch,FormatResults,Paginate,ReturnJSON,FetchDetails serverProcess
+    class CheckVec decision

@@ -1,0 +1,50 @@
+classDiagram
+    class CustomUser {
+        -email: EmailField
+        +USERNAME_FIELD: str
+        +REQUIRED_FIELDS: list
+        +__str__(): str
+    }
+    
+    class CustomUserManager {
+        +_create_user(email, password, **extra_fields): User
+        +create_user(email, password, **extra_fields): User
+        +create_superuser(email, password, **extra_fields): User
+    }
+    
+    class VectorSearchManager {
+        -model: SentenceTransformer
+        -sqlite_vec_available: bool
+        +__init__()
+        +_check_sqlite_vec_availability(): bool
+        +get_embedding(text): list
+        +similarity_search(source_type, query_text, limit): list
+        -_sqlite_vec_search(db_path, query_embedding, limit): list
+        -_fallback_similarity_search(db_path, query_embedding, limit): list
+        -_cosine_similarity(vec1, vec2): float
+    }
+    
+    class SetupVectorDBsCommand {
+        -model: SentenceTransformer
+        -sqlite_vec_available: bool
+        +handle(*args, **options): None
+        -_check_sqlite_vec_availability(): bool
+        +setup_database(source_type): None
+        +populate_sample_data(source_type): None
+        +generate_sample_data(source_type): list
+    }
+    
+    class Views {
+        +signup(request): HttpResponse
+        +signin(request): HttpResponse
+        +signout(request): HttpResponse
+        +home(request): HttpResponse
+        +search_ajax(request): JsonResponse
+        +source_detail(request): JsonResponse
+    }
+    
+    CustomUser --|> AbstractUser: extends
+    CustomUser --* CustomUserManager: uses
+    Views --* VectorSearchManager: uses
+    SetupVectorDBsCommand --* SentenceTransformer: uses
+    VectorSearchManager --* SentenceTransformer: uses

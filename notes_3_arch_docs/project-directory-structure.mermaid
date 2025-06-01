@@ -1,0 +1,47 @@
+graph TD
+    Root["similarity_search/"] --> ManagePy["manage.py"]
+    Root --> Requirements["requirements.txt"]
+    Root --> ReadMe["README.md"]
+    
+    Root --> ProjectDir["similarity_search/"]
+    ProjectDir --> Init1["__init__.py"]
+    ProjectDir --> Settings["settings.py"]
+    ProjectDir --> Urls1["urls.py"]
+    ProjectDir --> Wsgi["wsgi.py"]
+    
+    Root --> AppDir["similarity_search_app/"]
+    AppDir --> Init2["__init__.py"]
+    AppDir --> Admin["admin.py"]
+    AppDir --> Apps["apps.py"]
+    AppDir --> Models["models.py"]
+    AppDir --> Urls2["urls.py"]
+    AppDir --> Views["views.py"]
+    AppDir --> VectorUtils["vector_utils.py"]
+    
+    AppDir --> Management["management/"]
+    Management --> Init3["__init__.py"]
+    Management --> Commands["commands/"]
+    Commands --> Init4["__init__.py"]
+    Commands --> SetupVectorDbs["setup_vector_dbs.py"]
+    
+    Root --> Templates["templates/"]
+    Templates --> Base["base.html"]
+    Templates --> Home["home.html"]
+    Templates --> SignIn["signin.html"]
+    Templates --> SignUp["signup.html"]
+    
+    Root --> VectorDbs["vector_dbs/"]
+    VectorDbs --> AdminDb["admin.db"]
+    VectorDbs --> ITDb["it.db"]
+    VectorDbs --> FinanceDb["finance.db"]
+    VectorDbs --> HRDb["hr.db"]
+    
+    classDef python fill:#bbf,stroke:#333,stroke-width:1px
+    classDef html fill:#fbb,stroke:#333,stroke-width:1px
+    classDef db fill:#bfb,stroke:#333,stroke-width:1px
+    classDef dir fill:#ffb,stroke:#333,stroke-width:1px
+    
+    class ManagePy,Init1,Settings,Urls1,Wsgi,Init2,Admin,Apps,Models,Urls2,Views,VectorUtils,Init3,Init4,SetupVectorDbs python
+    class Base,Home,SignIn,SignUp html
+    class AdminDb,ITDb,FinanceDb,HRDb db
+    class ProjectDir,AppDir,Management,Commands,Templates,VectorDbs dir

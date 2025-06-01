@@ -1,0 +1,76 @@
+stateDiagram-v2
+    [*] --> LandingPage: User visits site
+    
+    state "Unauthenticated States" as Unauth {
+        LandingPage --> SignInPage: Click Sign In
+        LandingPage --> SignUpPage: Click Sign Up
+        
+        SignInPage --> ValidateSignIn: Submit credentials
+        SignUpPage --> ValidateSignUp: Submit registration
+        
+        state ValidateSignIn {
+            CheckCredentials --> EmailCheck: Check email format
+            EmailCheck --> PasswordCheck: Email valid
+            EmailCheck --> SignInError: Email invalid/not found
+            PasswordCheck --> AuthSuccess: Password correct
+            PasswordCheck --> SignInError: Password incorrect
+            SignInError --> SignInPage: Show error message
+        }
+        
+        state ValidateSignUp {
+            RegisterUser --> EmailValidation: Validate email
+            EmailValidation --> PasswordValidation: Email valid
+            EmailValidation --> SignUpError: Email invalid/exists
+            PasswordValidation --> CreateAccount: Password valid
+            PasswordValidation --> SignUpError: Password invalid
+            SignUpError --> SignUpPage: Show error message
+            CreateAccount --> SignInPage: Account created
+        }
+        
+        SignInPage --> ForgotPassword: Click forgot password
+        ForgotPassword --> PasswordResetRequest: Submit email
+        PasswordResetRequest --> PasswordResetSent: Email valid
+        PasswordResetSent --> PasswordResetPage: Click reset link
+        PasswordResetPage --> PasswordResetConfirm: Submit new password
+        PasswordResetConfirm --> SignInPage: Password reset success
+    }
+    
+    AuthSuccess --> AuthenticatedState: Create session
+    
+    state "Authenticated States" as Auth {
+        AuthenticatedState --> HomePage: Redirect to home
+        
+        HomePage --> ProfilePage: View profile
+        HomePage --> SearchPage: Perform search
+        ProfilePage --> EditProfile: Edit profile
+        EditProfile --> ProfilePage: Save changes
+        
+        state SessionManagement {
+            CheckSession --> SessionValid: Session active
+            CheckSession --> SessionExpired: Session expired
+            SessionValid --> ContinueSession: Continue browsing
+            SessionExpired --> SignInPage: Redirect to sign in
+        }
+        
+        HomePage --> SignOutAction: Click sign out
+        ProfilePage --> SignOutAction: Click sign out
+        SearchPage --> SignOutAction: Click sign out
+    }
+    
+    SignOutAction --> DestroySession: Clear session data
+    DestroySession --> LandingPage: Redirect to landing page
+    
+    note right of ValidateSignIn
+        Django authenticate() function
+        checks credentials against DB
+    end note
+    
+    note right of ValidateSignUp
+        Django UserManager.create_user()
+        creates new user in database
+    end note
+    
+    note right of SessionManagement
+        Django session middleware
+        handles session validation
+    end note
